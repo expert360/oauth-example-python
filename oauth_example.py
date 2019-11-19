@@ -10,15 +10,15 @@ import urllib, urllib2, urlparse
 # [user@host]: python oauth_example.py
 
 # Bullhorn OAuth client ID
-client_id = "client_id_here"
+client_id = "..."
 # Bullhorn OAuth secret
-client_secret = 'client_secret_here'
+client_secret = '...'
 # Bullhorn OAuth service endpoint.  Don't forget to change
 # host to auth9 if using a sandbox environment
 base_url = 'https://auth.bullhornstaffing.com/oauth'
 # put login credentials here
-username = ""
-password = ""
+username = "..."
+password = "..."
 
 class AuthCodeRedirectHandler(urllib2.HTTPRedirectHandler):
     """

@@ -1,0 +1,52 @@
+
+Step 1. Get authenticated via OUATH (using credentials, username and password):
+https://auth.bullhornstaffing.com/oauth/authorize
+request payload: username=expert360.api&action=Login&password=BUlling12%21&response_type=code&client_id=bf1dc930-9979-4957-aa75-82b423cd0ace
+
+Step 2. Look at headers in the response for the 'code' which is the authorization code
+code=60%3A5a2d7fea-d3ba-447e-8746-6700ad2bfca8&client_id=bf1dc930-9979-4957-aa75-82b423cd0ace
+auth code in headers: 60:5a2d7fea-d3ba-447e-8746-6700ad2bfca8
+
+Step 3. Get the access_token using the authorization 'code' returned
+https://auth.bullhornstaffing.com/oauth/token
+params: code=60%3A5a2d7fea-d3ba-447e-8746-6700ad2bfca8&client_secret=OaxcplRKPFOX4gEyIte9DAs8&grant_type=authorization_code&client_id=bf1dc930-9979-4957-aa75-82b423cd0ace
+response: {
+  "access_token" : "60:8ac7af39-76da-499a-807d-4816c407b3fc",
+  "token_type" : "Bearer",
+  "expires_in" : 600,
+  "refresh_token" : "60:2660b51b-a12d-4e44-b26f-a32c4c8a1edf"
+}
+access_token: 60:8ac7af39-76da-499a-807d-4816c407b3fc
+
+Step 4. Login using the access_token to get BhRestToken and restUrl for subsequent requests:
+https://rest.bullhornstaffing.com/rest-services/login
+resonse: {"BhRestToken":"cec303f2-1a30-465d-ba64-dcd9169a5c33","restUrl":"https://rest60.bullhornstaffing.com/rest-services/64pqp0/"}
+
+Step 5. Make a request - fetch candidate 5 details
+https://rest60.bullhornstaffing.com/rest-services/64pqp0/entity/Candidate/5?fields=firstName%2ClastName&BhRestToken=cec303f2-1a30-465d-ba64-dcd9169a5c33
+Response:{"data":{"firstName":"Jeniffer","lastName":"Gichubi"}}
+
+Step 6. Delete a Subscription to an event
+URL: https://rest60.bullhornstaffing.com/rest-services/64pqp0/event/subscription/candidate_events?BhRestToken=cec303f2-1a30-465d-ba64-dcd9169a5c33
+Method:DELETE
+Response:{"result":false}
+
+Step 7. Subscribe to Candidate Events
+URL: https://rest60.bullhornstaffing.com/rest-services/64pqp0/event/subscription/candidate_events?BhRestToken=cec303f2-1a30-465d-ba64-dcd9169a5c33&maxEvents=100&type=entity&names=Candidate&eventTypes=INSERTED,UPDATED,DELETED
+Method:PUT
+Response:{"subscriptionId":"candidate_events","jmsSelector":"JMSType='ENTITY' AND BhCorpId=19254 AND BhEntityName='Candidate' AND BhEntityEventType IN ('INSERTED','UPDATED','DELETED')","lastRequestId":0,"createdOn":1574133355386}
+
+
+Step 8. GET: Candidate Events
+URL: https://rest60.bullhornstaffing.com/rest-services/64pqp0/event/subscription/candidate_events?BhRestToken=4e6a5e25-a4a1-4ecb-a191-40c44568b288&maxEvents=100&requestId=1
+response status: 200
+
+Response:{"requestId":1,"events":[{"eventId":"ID:JBM-40000002","eventType":"ENTITY","eventTimestamp":1574142912400,"eventMetadata":{"CHANGE_HISTORY_ID":"11","TRANSACTION_ID":"1c7b7d44-eb12-4c95-9d59-66dca7a3bced","PERSON_ID":"3"},"entityName":"Candidate","entityId":6,"entityEventType":"UPDATED","updatedProperties":["email"]}]}
+
+Fetching events:
+--------------------------------------------------------------------------------------------------------------
+request:
+curl -v "https://rest60.bullhornstaffing.com/rest-services/64pqp0/event/subscription/candidate_events?maxEvents=1&requestId=1" -H "BhRestToken: 4231a86f-1cdb-4665-bbce-8ac43be9f5e4"
+
+response:
+{"requestId":1,"events":[{"eventId":"ID:JBM-40000002","eventType":"ENTITY","eventTimestamp":1574142912400,"eventMetadata":{"CHANGE_HISTORY_ID":"11","TRANSACTION_ID":"1c7b7d44-eb12-4c95-9d59-66dca7a3bced","PERSON_ID":"3"},"entityName":"Candidate","entityId":6,"entityEventType":"UPDATED","updatedProperties":["email"]}]}

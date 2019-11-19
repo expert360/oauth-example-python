@@ -1,12 +1,40 @@
-oauth-example-python
+What is this
 ====================
 
-This sample shows how to obtain a Bullhorn OAuth access token without having a browser and user in the loop.
+This is a repo forked from https://github.com/bullhorn/oauth-example-python to demonstrate API requests to Bullhorn as a prototype for the integration with Bullhorn
 
-Normally, A third-party application using Bullhorn OAuth would detect an un-authorized user and redirect the user's browser to Bullhorn's OAuth servers where the user would log in, then be redirected back to the third-party app.
+## What's in the repo
 
-Sometimes this flow is not possible, for example when the application is a scheduled job or anything else that either does not have a Web UI or needs to log in on behalf of a special user unattended.
+(1) Original implementation of making OAUTH requests: `oauth_example.py`
 
-The general strategy here is similar to the standard OAuth flow: obtain an access token, and from that obtain an authorization code.  Here, however, instead of sending the response from the access token request directly to a browser for redirection, we pull, in our code, the "Location" header off of the HTTP response from the access token request (this is the redirect).  This "Location" header contains a URL with a query string containing the access token.  Once we have this, we can turn around and make the request for an authorization code using the access token.
+  Notes
+  - OAuth request is made with the username and password included in the request.
+  - The redirect_uri is empty, so the response will be a 302
+  - The Location header of the redirect response, will contain "code" - this is where the authorization code is retrieved from.
 
-So instead of the browser propagating the access token from OAuth to our third-party app for us, we simply examine the HTTP response ourselves in code.
+The authorization code will be used to fetch an access_token to be used in subsequent requests
+
+(2) Example API requests in `rest-requests.py`
+
+This contains API calls to
+
+- OAuth request from step 1.
+- Login to get the access_token
+- Fetch candidate details
+- Delete and add event subscription
+- Fetch updates from an event subscription
+
+See `notes.txt` for an example of the output of the `rest-requests.py` script
+
+## How to run the script
+
+To run just OAuth requests:
+
+```
+python oauth_example.py
+```
+
+To run OAuth + REST API requests
+```
+python rest-requests.py
+```
