@@ -1,15 +1,15 @@
 
 Step 1. Get authenticated via OUATH (using credentials, username and password):
 https://auth.bullhornstaffing.com/oauth/authorize
-request payload: username=expert360.api&action=Login&password=BUlling12%21&response_type=code&client_id=bf1dc930-9979-4957-aa75-82b423cd0ace
+request payload: username=expert360.api&action=Login&password=xxx%21&response_type=code&client_id=xxx
 
 Step 2. Look at headers in the response for the 'code' which is the authorization code
-code=60%3A5a2d7fea-d3ba-447e-8746-6700ad2bfca8&client_id=bf1dc930-9979-4957-aa75-82b423cd0ace
+code=60%3A5a2d7fea-d3ba-447e-8746-6700ad2bfca8&client_id=xxx
 auth code in headers: 60:5a2d7fea-d3ba-447e-8746-6700ad2bfca8
 
 Step 3. Get the access_token using the authorization 'code' returned
 https://auth.bullhornstaffing.com/oauth/token
-params: code=60%3A5a2d7fea-d3ba-447e-8746-6700ad2bfca8&client_secret=OaxcplRKPFOX4gEyIte9DAs8&grant_type=authorization_code&client_id=bf1dc930-9979-4957-aa75-82b423cd0ace
+params: code=60%3A5a2d7fea-d3ba-447e-8746-6700ad2bfca8&client_secret=xxx&grant_type=authorization_code&client_id=xxx
 response: {
   "access_token" : "60:8ac7af39-76da-499a-807d-4816c407b3fc",
   "token_type" : "Bearer",
