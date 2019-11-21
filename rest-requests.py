@@ -85,6 +85,41 @@ def get_access_token(code):
     f = urllib2.urlopen(req)
     return f.read()
 
+def login(access_token):
+    """
+    Login using the access token, to get a BHRestToken
+    """
+    # login request to get the BhRestToken and restUrl
+    login_data = urllib.urlencode({
+        "version": "2.0",
+        "access_token": access_token
+    })
+    req = urllib2.Request(url=api_url + "/login", data=login_data)
+    print("\nStep 4. GET: Login using the access_token to get BhRestToken and restUrl for subsequent requests:")
+    print(req.get_full_url())
+    f = urllib2.urlopen(req)
+    return f.read()
+
+def get_candidate(bhRestToken, restUrl, candidate_id):
+    # https://rest.bullhornstaffing.com/rest-services/{corpToken}/entity/Candidate/{id}?BhRestToken={session_key}&fields=firstName,lastName,address
+    candidate_data = urllib.urlencode({
+        "BhRestToken": bhRestToken,
+        "fields": "firstName,lastName"
+    })
+    print(candidate_data) #url encoded params
+    req = urllib2.Request(restUrl + "entity/Candidate/" + candidate_id + "?" + candidate_data)
+    print(req.get_full_url())
+    f = urllib2.urlopen(req)
+    return f.read()
+
+def get_event_subscription(bhRestToken, restUrl, event):
+    headers = {'BhRestToken': bhRestToken}
+    req = urllib2.Request(restUrl + "event/subscription/" + event + "?BhRestToken=" + bhRestToken + "&maxEvents=100&requestId=1")
+    print("URL: " + req.get_full_url())
+    f = urllib2.urlopen(req)
+    print("response status: " + str(f.getcode()))
+    return f.read()
+
 if __name__ == "__main__":
     req = build_auth_code_request(username, password)
     print("\nStep 1. POST: Get authenticated via OUATH (using credentials, username and password): ")
@@ -105,36 +140,18 @@ if __name__ == "__main__":
     print('access_token: ' + access_token_json['access_token'])
 
     # login request to get the BhRestToken and restUrl
-    login_data = urllib.urlencode({
-        "version": "2.0",
-        "access_token": access_token_json['access_token']
-    })
-
-    req = urllib2.Request(url=api_url + "/login", data=login_data)
     print("\nStep 4. GET: Login using the access_token to get BhRestToken and restUrl for subsequent requests:")
-    print(req.get_full_url())
-    f = urllib2.urlopen(req)
-    resp = f.read()
-    print("resonse: " + resp)
+    resp = login(access_token_json['access_token'])
+    print("response: " + resp)
+
 
     # get BhRestToken and restUrl
     login_resp_json = json.loads(resp)
     bhRestToken = login_resp_json['BhRestToken']
     restUrl = login_resp_json['restUrl']
 
-    print("\nStep 5. GET: Make a request - fetch candidate 5 details")
-    # get a candidate
-    # https://rest.bullhornstaffing.com/rest-services/{corpToken}/entity/Candidate/{id}?BhRestToken={session_key}&fields=firstName,lastName,address
-    candidate_data = urllib.urlencode({
-        "BhRestToken": bhRestToken,
-        "fields": "firstName,lastName"
-    })
-    candidate_id = "5"
-    # print(candidate_data) #url encoded params
-    req = urllib2.Request(restUrl + "entity/Candidate/" + candidate_id + "?" + candidate_data)
-    print(req.get_full_url())
-    f = urllib2.urlopen(req)
-    resp = f.read()
+    # print("\nStep 5. GET: Make a request - fetch candidate 5 details")
+    resp = get_candidate(bhRestToken, restUrl, "5")
     print("Response:" + resp)
 
     # This is generally not needed, but deleting old events for testing and demonstration only
@@ -163,15 +180,9 @@ if __name__ == "__main__":
     # print("lastRequestId: " + str(last_request_id))
 
     # Get event subscription
-    last_request_id = 1 #Note: request id = 0 does not return results
     print("\nStep 8. GET: Candidate Events")
-    headers = {'BhRestToken': bhRestToken}
-    req = urllib2.Request(restUrl + "event/subscription/candidate_events?BhRestToken=" + bhRestToken + "&maxEvents=100&requestId=" + str(last_request_id))
-    print("URL: " + req.get_full_url())
-    f = urllib2.urlopen(req)
-    print("response status: " + str(f.getcode()))
-    resp = f.read()
-    print("Response:" + resp)
+    resp = get_event_subscription(bhRestToken, restUrl, "candidate_events")
+    print("Response: " + resp)
 
     # TODO: refresh token flow - ideally store the token in cache until expiry time and then refetch using the refresh token
 
