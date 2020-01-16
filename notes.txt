@@ -50,3 +50,10 @@ curl -v "https://rest60.bullhornstaffing.com/rest-services/64pqp0/event/subscrip
 
 response:
 {"requestId":1,"events":[{"eventId":"ID:JBM-40000002","eventType":"ENTITY","eventTimestamp":1574142912400,"eventMetadata":{"CHANGE_HISTORY_ID":"11","TRANSACTION_ID":"1c7b7d44-eb12-4c95-9d59-66dca7a3bced","PERSON_ID":"3"},"entityName":"Candidate","entityId":6,"entityEventType":"UPDATED","updatedProperties":["email"]}]}
+
+Fetching Events with deletion
+--------------------------------------------------------------------------------------------------------------
+
+URL: https://rest60.bullhornstaffing.com/rest-services/64pqp0/event/subscription/E360Events?BhRestToken=0ee08046-5e28-4735-ba10-44fedeac053b&maxEvents=100
+response status: 200
+Response: {"requestId":228,"events":[{"eventId":"ID:JBM-40000511","eventType":"ENTITY","eventTimestamp":1579150275158,"eventMetadata":{"TRANSACTION_ID":"7b0bb4d1-17d7-4db0-b6b7-147e687f079e","CHANGE_HISTORY_ID":"268","PERSON_ID":"3"},"entityName":"Candidate","entityId":126,"entityEventType":"UPDATED","updatedProperties":["isDeleted"]}]}
